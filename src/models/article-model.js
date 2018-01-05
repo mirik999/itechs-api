@@ -10,6 +10,8 @@ const schema = new mongoose.Schema({
 	avatar: { type: String, required: true },
 	added: { type: Date, default: Date.now },
 	pageview: { type: Number, default: 0 },
+	disableComment: { type: Boolean },
+	tags: { type: String, default: false },
 	like: [
 		{
 			count: { type: Number, required: false },
@@ -24,7 +26,6 @@ const schema = new mongoose.Schema({
 	],
 	comments: [
 		{
-			_id: mongoose.Schema.Types.ObjectId,
 			text: { type: String, required: true },
 			author: {
 				name: String,

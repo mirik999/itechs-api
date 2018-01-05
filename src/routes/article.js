@@ -1,14 +1,16 @@
 import express from 'express';
 import Article from '../models/article-model';
-import User from '../models/user-model';
 import parseErrors from '../utils/parseErrors';
 import mongoose from 'mongoose';
+// import Notify from '../models/notify-model';
 
 const router = express.Router();
 
 router.post('/new-article', (req, res) => {
-	const { content, avatar, author, email, title, image } = req.body.data;
-	const articles = new Article({ _id: new mongoose.Types.ObjectId(), content, avatar, email, author, title, image })
+	const { content, avatar, author, email, title, image, tags, disableComment } = req.body.data;
+	const articles = new Article({ _id: new mongoose.Types.ObjectId(),
+		content, avatar, email, author, title, image, tags, disableComment
+	})
 		articles
 		.save()
 		.then(article => {
@@ -59,6 +61,14 @@ router.post('/like', (req, res, next) => {
 	Article.findByIdAndUpdate({ _id: id }, { $push: { "like": { "count": 1, "likedBy": name } } })
 		.exec((err, likedArticle) => {
 			if(err) return res.status(400).json({ WentWrong: "Something Went Wrong When u r clicking like" })
+			// new Notify({
+			// 	_id: new mongoose.Types.ObjectId(),
+			// 	articleId: likedArticle._id,
+			// 	author: likedArticle.email,
+			// 	comment: `${name} liked your `
+			// }).save()
+			// 	.then((notify) => res.status(200).json({ notify }))
+			// 	.catch(err => res.status(400).json({ WentWrong: "Something Went Wrong" }))
 		})
 })
 
@@ -82,6 +92,14 @@ router.post('/dislike', (req, res, next) => {
 	Article.findByIdAndUpdate({ _id: id }, { $push: { "dislike": { "count": 1, "dislikedBy": name } } })
 		.exec((err, dislikedArticle) => {
 			if(err) return res.status(400).json({ WentWrong: "Something Went Wrong When u r clicking dislike" })
+			// new Notify({
+			// 	_id: new mongoose.Types.ObjectId(),
+			// 	articleId: dislikedArticle._id,
+			// 	author: dislikedArticle.email,
+			// 	comment: `${name} disliked your `
+			// }).save()
+			// 	.then((notify) => res.status(200).json({ notify }))
+			// 	.catch(err => res.status(400).json({ WentWrong: "Something Went Wrong" }))
 		})
 })
 

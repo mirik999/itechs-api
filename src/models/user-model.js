@@ -11,7 +11,7 @@ const schema = new mongoose.Schema({
   useravatar: { type: String, required: true },
 	userip: { type: String, required: true },
   accessToken: { type: String },
-	votes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }]
+	date: { type: Date, default: Date.now }
 });
 
 schema.methods.generateJWT = function generateJWT() {

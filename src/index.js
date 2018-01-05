@@ -11,6 +11,8 @@ import auth from './routes/authenticate';
 import article from './routes/article';
 import feedback from './routes/feedback';
 import comment from './routes/comment';
+// import notify from './routes/notify';
+import profile from './routes/profile';
 // connect to mongodb
 mongoose.Promise = Promise;
 mongoose.connect(keys.mongoDB.db, { useMongoClient: true }, () => console.log('MongoDB started'))
@@ -26,6 +28,8 @@ app.use('/auth', auth);
 app.use('/article', article);
 app.use('/feedback', feedback);
 app.use('/comment', comment);
+// app.use('/notify', notify); //socket-nen elemek lazimdi ay bala ))
+app.use('/profile', profile);
 // default
 app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'))
