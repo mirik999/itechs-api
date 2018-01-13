@@ -5,7 +5,8 @@ const schema = new mongoose.Schema({
 	user: { type: String, unique: true },
 	about: { type: String, default: "" },
 	portfolio: { type: String, default: "" },
-	contact: { type: String, default: "" }
+	contact: { type: String, default: "" },
+	bgImg: { type: String, default: "" }
 })
 
 const Profile = mongoose.model('Profile', schema)
