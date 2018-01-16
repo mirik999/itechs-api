@@ -4,16 +4,12 @@ import Profile from '../models/profile-model';
 
 const router = express.Router();
 
-router.post('/get-my-profile', (req, res) => {
+router.post('/get-profile', (req, res) => {
 	const email = req.body.data;
-	Profile.findOne({ user: email })
-		.then(profile => {
-			if (profile) {
-				res.json({ profile })
-			} else {
-				res.json({ profile: {} })
-			}
-		})
+	Profile.findOne({ user: email }, (err, profile) => {
+		if (err) res.status(400).json({ WentWrong: "Something went wrong when getting profile" })
+		res.json({ profile })
+	})
 })
 
 router.post('/editing', (req, res) => {

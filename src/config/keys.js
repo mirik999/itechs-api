@@ -1,7 +1,7 @@
 export default {
   mongoDB: {
-    //db: 'mongodb://devs:q1w2e3r4@ds113915.mlab.com:13915/developers'
-	  db: 'mongodb://localhost:27017/developers'
+    db: 'mongodb://devs:q1w2e3r4@ds113915.mlab.com:13915/developers'
+	  //db: 'mongodb://localhost:27017/developers'
   },
   fblogin: {
     clientID: '128678167815456',
