@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import axios from 'axios';
 import User from '../models/user-model';
+import Profile from '../models/profile-model';
 import parseErrors from '../utils/parseErrors';
 
 const router = express.Router();
@@ -13,6 +14,7 @@ router.post('/facebook', (req, res) => {
     if (currentUser) {
       res.json({ user: currentUser.toAuth() })
     } else {
+	    //user
       const user = new User({
 	      _id: new mongoose.Types.ObjectId(),
         username: req.body.data.name,
@@ -22,6 +24,10 @@ router.post('/facebook', (req, res) => {
 	      userip: ip
       })
       user.save().then((newUser) => {
+	      //profile
+	      const profile = new Profile({ _id: new mongoose.Types.ObjectId(), user: newUser.email })
+	      profile.save().catch(err => res.status(400).json({ errors: { global: "error when creating user profile" }}))
+	      // return user
         res.json({ user: newUser.toAuth() })
       })
 	      .catch(err => res.status(400).json({ errors: { global: parseErrors(err.errors) }}))
@@ -45,6 +51,10 @@ router.post('/google', (req, res) => {
 					userip: ip
 				})
 				user.save().then((newUser) => {
+					//profile
+					const profile = new Profile({ _id: new mongoose.Types.ObjectId(), user: newUser.email })
+					profile.save().catch(err => res.status(400).json({ errors: { global: "error when creating user profile" }}))
+					// return user
 					res.json({ user: newUser.toAuth() })
 				})
 					.catch(err => res.status(400).json({ errors: { global: parseErrors(err.errors) }}))

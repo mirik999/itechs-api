@@ -36,8 +36,8 @@ app.get('/*', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'build', 'index.html'))
 });
 // dev
-// app.get('/*', (req, res) => {
-//   res.sendFile(path.resolve(__dirname, 'index.html'))
-// });
+app.get('/*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'index.html'))
+});
 // server start
 const server = app.listen(4000, () => console.log('Server started on port 4000'));
