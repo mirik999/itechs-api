@@ -15,7 +15,7 @@ import comment from './routes/comment';
 import profile from './routes/profile';
 // connect to mongodb
 mongoose.Promise = Promise;
-mongoose.connect(keys.mongoDB.db, { useMongoClient: true }, () => console.log('MongoDB started'))
+mongoose.connect(keys.mongoDB.db, { useMongoClient: true }, () => console.log('Mongo started'))
 // server settings
 dotenv.config();
 const app = express();
@@ -40,4 +40,6 @@ app.get('/*', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'index.html'))
 });
 // server start
-const server = app.listen(4000, () => console.log('Server started on port 4000'));
+const server = app.listen(process.env.PORT || 4000, () =>
+	console.log('listening on', http.address().port)
+);
