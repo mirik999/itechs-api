@@ -7,12 +7,12 @@ import parseErrors from '../utils/parseErrors';
 
 const router = express.Router();
 
-router.post('/facebook', (req, res) => {
+router.post('/fblogin', (req, res) => {
 	const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   User.findOne({ facebookId: req.body.data.id })
-  .then((currentUser) => {
-    if (currentUser) {
-      res.json({ user: currentUser.toAuth() })
+  .then((currentUserFace) => {
+    if (currentUserFace) {
+      res.json({ user: currentUserFace.toAuth() })
     } else {
 	    //user
       const user = new User({
@@ -35,12 +35,12 @@ router.post('/facebook', (req, res) => {
   })
 });
 
-router.post('/google', (req, res) => {
+router.post('/gglogin', (req, res) => {
 	const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 	User.findOne({ googleId: req.body.data.googleId })
-		.then((currentUser) => {
-			if (currentUser) {
-				res.json({ user: currentUser.toAuth() })
+		.then((currentUserGoogle) => {
+			if (currentUserGoogle) {
+				res.json({ user: currentUserGoogle.toAuth() })
 			} else {
 				const user = new User({
 					_id: new mongoose.Types.ObjectId(),
@@ -63,11 +63,11 @@ router.post('/google', (req, res) => {
 });
 
 
-router.post('/github', (req, res) => {
-  const { data } = req.body;
-	axios.post('https://github.com/login/oauth/access_token', { data })
-		.then(data => console.log(data))
-		.catch(err => console.log('error'))
-});
+// router.post('/github', (req, res) => {
+//   const { data } = req.body;
+// 	axios.post('https://github.com/login/oauth/access_token', { data })
+// 		.then(data => console.log(data))
+// 		.catch(err => console.log('error'))
+// });
 
 export default router;

@@ -1,4 +1,5 @@
 import express from 'express';
+import http from 'http';
 import path from 'path';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
@@ -19,27 +20,28 @@ mongoose.connect(keys.mongoDB.db, { useMongoClient: true }, () => console.log('M
 // server settings
 dotenv.config();
 const app = express();
+app.server = http.createServer(app)
 // set middleware
-app.use(express.static(path.resolve(__dirname, 'build'))); // production
+app.use(cors({ exposedHeaders: "*" }));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
-app.use(cors());
+app.use(express.static(path.join(__dirname, 'build'))); // production
 // routing
 app.use('/auth', auth);
 app.use('/article', article);
 app.use('/feedback', feedback);
 app.use('/comment', comment);
-// app.use('/notify', notify); //socket-nen elemek lazimdi ay bala ))
 app.use('/profile', profile);
+//app.use('/notify', notify); //socket-nen elemek lazimdi ay bala ))
 // production
 app.get('/*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'build', 'index.html'))
+  res.sendFile(path.join(__dirname, 'build', 'index.html'))
 });
 // dev
-app.get('/*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'index.html'))
-});
+// app.get('/*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'index.html'))
+// });
 // server start
-const server = app.listen(process.env.PORT || 4000, () =>
-	console.log('listening on', http.address().port)
+app.server.listen(process.env.PORT || 4000, () =>
+	console.log(`listening on ${app.server.address().port}`)
 );
