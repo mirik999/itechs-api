@@ -1,10 +1,13 @@
 import mongoose from 'mongoose';  
 import jwt from 'jsonwebtoken';
+import uniqueValidator from 'mongoose-unique-validator';
+import bcrypt from 'bcrypt';
 
 const schema = new mongoose.Schema({
 	_id: mongoose.Schema.Types.ObjectId,
-  username: { type: String, required: true },
-  email: { type: String, required: true },
+  username: { type: String, required: true, unique: true, index: true },
+  email: { type: String, required: true, unique: true, index: true, lowercase: true },
+	passwordHash: { type: String },
   facebookId: { type: String },
   githubId: { type: String },
 	googleId: { type: String },
@@ -13,6 +16,14 @@ const schema = new mongoose.Schema({
   accessToken: { type: String },
 	date: { type: Date, default: Date.now }
 });
+
+schema.methods.setPassword = function setPassword(password) {
+	this.passwordHash = bcrypt.hashSync(password, 10)
+};
+
+schema.methods.isValidPassword = function isValidPassword(password) {
+	return bcrypt.compareSync(password, this.passwordHash)
+};
 
 schema.methods.generateJWT = function generateJWT() {
   return jwt.sign({
@@ -30,6 +41,9 @@ schema.methods.toAuth = function toAuth() {
     token: this.generateJWT()
   }
 };
+
+// schema plugins
+schema.plugin(uniqueValidator, { message: "This data is already taken" });
 
 const User = mongoose.model('User', schema);
 

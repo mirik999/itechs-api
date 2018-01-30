@@ -2,6 +2,7 @@ import express from 'express';
 import http from 'http';
 import path from 'path';
 import bodyParser from 'body-parser';
+import EventEmitter from 'events';
 import mongoose from 'mongoose';
 import Promise from 'bluebird';
 import dotenv from 'dotenv';
@@ -21,11 +22,13 @@ mongoose.connect(keys.mongoDB.db, { useMongoClient: true }, () => console.log('M
 dotenv.config();
 const app = express();
 app.server = http.createServer(app)
+const emitter = new EventEmitter()
+emitter.setMaxListeners(20)
 // set middleware
-app.use(cors({ exposedHeaders: "*" }));
+app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
-app.use(express.static(path.join(__dirname, 'build'))); // production
+//app.use(express.static(path.join(__dirname, 'build'))); // production
 // routing
 app.use('/auth', auth);
 app.use('/article', article);
@@ -34,13 +37,13 @@ app.use('/comment', comment);
 app.use('/profile', profile);
 //app.use('/notify', notify); //socket-nen elemek lazimdi ay bala ))
 // production
-app.get('/*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'))
-});
-// dev
 // app.get('/*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'index.html'))
+//   res.sendFile(path.join(__dirname, 'build', 'index.html'))
 // });
+// dev
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'))
+});
 // server start
 app.server.listen(process.env.PORT || 4000, () =>
 	console.log(`listening on ${app.server.address().port}`)

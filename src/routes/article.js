@@ -30,7 +30,7 @@ router.get('/get-all-articles', (req, res) => {
 
 router.post('/get-one-article', (req, res) => {
 	const { id } = req.body;
-	Article.findByIdAndUpdate({ _id: id }, { $inc: { "pageview": 1 } }, (err, oneArticle) => {
+	Article.findByIdAndUpdate({ _id: id }, { $inc: { "pageview": 0.3 } }, (err, oneArticle) => {
 			if (err) return res.status(400).json({ NotFound: "Article Not Found" })
 			res.json({ oneArticle })
 		})

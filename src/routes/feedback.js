@@ -17,7 +17,7 @@ router.post('/new-feedback', (req, res) => {
 		const mailOptions = {
 			from: `${name}`,
 			to: 'miraliko@hotmail.com',
-			subject: 'FeedBack from Devs.az',
+			subject: 'FeedBack from itechs.info',
 			html: `<p>${text}<br><br>sent by: <strong>${name} - ${email}</strong></p>`
 		};
 
