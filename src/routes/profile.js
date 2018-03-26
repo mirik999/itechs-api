@@ -4,15 +4,15 @@ import Profile from '../models/profile-model';
 
 const router = express.Router();
 
-router.post('/get-profile', (req, res) => {
-	const email = req.body.data;
+router.get('/get-profile/:email', (req, res) => {
+	const { email } = req.params;
 	Profile.findOne({ user: email }, (err, profile) => {
 		if (err) res.status(400).json({ WentWrong: "Something went wrong when getting profile" })
 		res.json({ profile })
 	})
 })
 
-router.post('/editing', (req, res) => {
+router.put('/editing/:id', (req, res) => {
 	const { data } = req.body;
 		Profile.findOneAndUpdate({ user: data.email }, { $set: {
 			"about": data.data.about,
@@ -24,9 +24,9 @@ router.post('/editing', (req, res) => {
 		})
 })
 
-router.post('/change-cover', (req, res) => {
-	const { url, email } = req.body.data;
-	Profile.findOneAndUpdate({ user: email }, { $set: { "bgImg" : url } }, (err, profile) => {
+router.put('/change-cover/:id', (req, res) => {
+	const { bgImg, smallImage, email } = req.body.data;
+	Profile.findOneAndUpdate({ user: email }, { $set: { bgImg, smallImage } }, (err, profile) => {
 		if (err) res.status(400).json({ WentWrong: "Something went wrong when changing profile cover image" })
 		res.json({ profile })
 	})

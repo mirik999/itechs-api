@@ -2,7 +2,7 @@ import express from 'express';
 import Article from '../models/article-model';
 import parseErrors from '../utils/parseErrors';
 import mongoose from 'mongoose';
-// import Notify from '../models/notify-model';
+import _ from 'lodash';
 
 const router = express.Router();
 
@@ -28,7 +28,7 @@ router.get('/get-all-articles', (req, res) => {
 		})
 })
 
-router.post('/get-one-article', (req, res) => {
+router.get('/get-one-article/:id', (req, res) => {
 	const { id } = req.body;
 	Article.findByIdAndUpdate({ _id: id }, { $inc: { "pageview": 0.3 } }, (err, oneArticle) => {
 			if (err) return res.status(400).json({ NotFound: "Article Not Found" })
@@ -36,72 +36,26 @@ router.post('/get-one-article', (req, res) => {
 		})
 })
 
-// middleware for checking name in votes. One person can vote only one time for each vote
+// like system
 router.post('/like', (req, res, next) => {
-	const { id, name } = req.body.data;
-	// creating empty array
-	let allNames = [];
+	const { name, id } = req.body.data;
+
 	Article.findById({ _id: id }, (err, article) => {
-		// if zero votes -> next() else checking name
-		if (article.like.length !== 0) {
-				// checking all data with filter and pushing datas to the array
-				article.like.filter((element) => allNames.push(element.likedBy))
-			// checking if in array includes session name -> reject else resolve
-			if (allNames.includes(name)) {
-				res.status(400).json({ likeCount: "Limited" })
-			} else {
-				next();
-			}
+
+		const check = article.like.filter(like => like.likedBy.includes(name))
+
+		if (!_.isEmpty(check)) {
+			Article.findByIdAndUpdate(article.id, {$pull: { like: { likedBy: name } }}, {safe: true}, (err, art) => {
+				if(err)	return res.status(400).json({ disLike: "Something went wrong" }); 
+				else return res.json({ like: false });
+			});
 		} else {
-			next();
+			Article.findByIdAndUpdate(article.id, {$push: { like: { likedBy: name } }}, {safe: true}, (err, art) => {
+				if(err)	return res.status(400).json({ addLike: "Something went wrong" }); 
+				else return res.json({ like: true });
+			});
 		}
 	})
-}, (req, res) => {
-	const { id, name } = req.body.data;
-	Article.findByIdAndUpdate({ _id: id }, { $push: { "like": { "count": 1, "likedBy": name } } })
-		.exec((err, likedArticle) => {
-			if(err) return res.status(400).json({ WentWrong: "Something Went Wrong When u r clicking like" })
-			// new Notify({
-			// 	_id: new mongoose.Types.ObjectId(),
-			// 	articleId: likedArticle._id,
-			// 	author: likedArticle.email,
-			// 	comment: `${name} liked your `
-			// }).save()
-			// 	.then((notify) => res.status(200).json({ notify }))
-			// 	.catch(err => res.status(400).json({ WentWrong: "Something Went Wrong" }))
-		})
 })
-
-router.post('/dislike', (req, res, next) => {
-	const { id, name } = req.body.data;
-	let allNames = [];
-	Article.findById({ _id: id }, (err, article) => {
-		if (article.dislike.length !== 0) {
-			article.dislike.filter((element) => allNames.push(element.dislikedBy))
-			if (allNames.includes(name)) {
-				res.status(400).json({ dislikeCount: "Limited" })
-			} else {
-				next();
-			}
-		} else {
-			next();
-		}
-	})
-}, (req, res) => {
-	const { id, name } = req.body.data;
-	Article.findByIdAndUpdate({ _id: id }, { $push: { "dislike": { "count": 1, "dislikedBy": name } } })
-		.exec((err, dislikedArticle) => {
-			if(err) return res.status(400).json({ WentWrong: "Something Went Wrong When u r clicking dislike" })
-			// new Notify({
-			// 	_id: new mongoose.Types.ObjectId(),
-			// 	articleId: dislikedArticle._id,
-			// 	author: dislikedArticle.email,
-			// 	comment: `${name} disliked your `
-			// }).save()
-			// 	.then((notify) => res.status(200).json({ notify }))
-			// 	.catch(err => res.status(400).json({ WentWrong: "Something Went Wrong" }))
-		})
-})
-
 
 export default router;
