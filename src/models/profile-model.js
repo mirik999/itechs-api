@@ -3,11 +3,12 @@ import mongoose from 'mongoose';
 const schema = new mongoose.Schema({
 	_id: mongoose.Schema.Types.ObjectId,
 	user: { type: String, unique: true },
-	about: { type: String, default: "" },
-	portfolio: { type: String, default: "" },
-	contact: { type: String, default: "" },
-	bgImg: { type: String, default: "https://res.cloudinary.com/developers/image/upload/v1515360029/bg-img_kbpmjl.png" },
-	smallImage: { type: String, default: "https://res.cloudinary.com/developers/image/upload/w_200,h_100/v1515360029/bg-img_kbpmjl.png" }
+	about: { type: String },
+	portfolio: { type: String },
+	contact: { type: String },
+	github: { type: String },
+	bgImg: { type: String },
+	smallImage: { type: String }
 })
 
 const Profile = mongoose.model('Profile', schema)
