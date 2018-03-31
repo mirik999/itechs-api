@@ -45,12 +45,12 @@ router.post('/like', (req, res, next) => {
 		const check = article.like.filter(like => like.likedBy.includes(name))
 
 		if (!_.isEmpty(check)) {
-			Article.findByIdAndUpdate(article.id, {$pull: { like: { likedBy: name } }}, {safe: true}, (err, art) => {
+			Article.findByIdAndUpdate(article.id, {$pull: { like: { "likedBy": name } }}, {safe: true}, (err, art) => {
 				if(err)	return res.status(400).json({ disLike: "Something went wrong" }); 
 				else return res.json({ like: false });
 			});
 		} else {
-			Article.findByIdAndUpdate(article.id, {$push: { like: { likedBy: name } }}, {safe: true}, (err, art) => {
+			Article.findByIdAndUpdate(article.id, {$push: { like: { "likedBy": name } }}, {safe: true}, (err, art) => {
 				if(err)	return res.status(400).json({ addLike: "Something went wrong" }); 
 				else return res.json({ like: true });
 			});
