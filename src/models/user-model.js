@@ -5,8 +5,8 @@ import bcrypt from 'bcrypt';
 
 const schema = new mongoose.Schema({
 	_id: mongoose.Schema.Types.ObjectId,
-  username: { type: String, required: true, unique: true, index: true },
-  email: { type: String, required: true, unique: true, index: true, lowercase: true },
+  username: { type: String, required: true, unique: true, index: true, trim: true },
+  email: { type: String, required: true, unique: true, index: true, lowercase: true, trim: true },
 	passwordHash: { type: String },
   facebookId: { type: String },
   githubId: { type: String },
@@ -14,7 +14,27 @@ const schema = new mongoose.Schema({
   useravatar: { type: String, required: true },
 	userip: { type: String, required: true },
   accessToken: { type: String },
-	date: { type: Date, default: Date.now }
+  date: { type: Date, default: Date.now },
+  about: { type: String },
+	portfolio: { type: String },
+	contact: { type: String },
+	github: { type: String },
+	bgImg: { type: String, default: "http://res.cloudinary.com/developers/image/upload/v1513099538/ynufy8bwqn1qrwdxcinh.png" },
+	smallImage: { type: String, default: "http://res.cloudinary.com/developers/image/upload/c_scale,w_300/v1513099538/ynufy8bwqn1qrwdxcinh.png" },
+	followedUsers: [
+		{ 
+      _id: { type: mongoose.Schema.Types.ObjectId },
+			followedUserName: { type: String, unique: true, index: true },
+			followedUserEmail: { type: String, unique: true, index: true }	
+		}
+	],
+	myFollows: [
+		{ 
+      _id: { type: mongoose.Schema.Types.ObjectId },
+			followedUserName: { type: String, unique: true, index: true },
+			followedUserEmail: { type: String, unique: true, index: true }	
+		}
+	]
 });
 
 schema.methods.setPassword = function setPassword(password) {
@@ -27,17 +47,13 @@ schema.methods.isValidPassword = function isValidPassword(password) {
 
 schema.methods.generateJWT = function generateJWT() {
   return jwt.sign({
-    username: this.username,
     email: this.email,
-    useravatar: this.useravatar
   }, 'thesecretisopened', { expiresIn: '6h' })
 };
 
 schema.methods.toAuth = function toAuth() {
   return {
-    username: this.username,
     email: this.email,
-    useravatar: this.useravatar,
     token: this.generateJWT()
   }
 };

@@ -2,14 +2,13 @@ import express from 'express';
 import mongoose from 'mongoose';
 import axios from 'axios';
 import User from '../models/user-model';
-import Profile from '../models/profile-model';
 import parseErrors from '../utils/parseErrors';
 
 const router = express.Router();
 
 router.post('/register', (req, res) => {
 	const { uname, email, pass } = req.body.data;
-	const uniqueNick = `${uname}${Math.floor(Math.random() * 100)}`
+	const uniqueNick = `${uname.trim()}${Math.floor(Math.random() * 100)}`;
 	const avatar = `https://api.adorable.io/avatars/286/${uniqueNick}@adorable.png`;
 	const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 	const user = new User({
@@ -20,24 +19,22 @@ router.post('/register', (req, res) => {
 		userip: ip
 	})
 	user.setPassword(pass)
-	user.save()
-		.then((newUser) => {
-		//profile
-		const profile = new Profile({ _id: new mongoose.Types.ObjectId(), user: newUser.email })
-		profile.save().catch(err => res.status(400).json({ errors: { global: "error when creating user profile" }}))
-		// return user
-		res.json({ user: newUser.toAuth() })
+	user
+		.save()
+		.then(userRecord => res.json({ user: userRecord.toAuth() }))
+		.catch(err => {
+			console.log(err)
+			return res.status(400).json({ errors: { global: parseErrors(err.errors) }})
 		})
-		.catch(err => res.status(400).json({ errors: { global: parseErrors(err.errors) }}))
 })
 
 router.post('/enter', (req, res) => {
 	const { email, pass } = req.body.data;
-	User.findOne({ email: email }).then(user => {
+	User.findOne({ email }).then(user => {
 		if (user && user.isValidPassword(pass)) {
 			res.json({ user: user.toAuth() })
 		} else {
-				res.status(400).json({errors: {global: "Datas not correct"}})
+				res.status(400).json({errors: {global: "The data is not in the correct format"}})
 		}
 	})
 });
@@ -59,10 +56,6 @@ router.post('/fblogin', (req, res) => {
 	      userip: ip
       })
       user.save().then((newUser) => {
-	      //profile
-	      const profile = new Profile({ _id: new mongoose.Types.ObjectId(), user: newUser.email })
-	      profile.save().catch(err => res.status(400).json({ errors: { global: "error when creating user profile" }}))
-	      // return user
         res.json({ user: newUser.toAuth() })
       })
 	      .catch(err => res.status(400).json({ errors: { global: parseErrors(err.errors) }}))
@@ -86,10 +79,6 @@ router.post('/gglogin', (req, res) => {
 					userip: ip
 				})
 				user.save().then((newUser) => {
-					//profile
-					const profile = new Profile({ _id: new mongoose.Types.ObjectId(), user: newUser.email })
-					profile.save().catch(err => res.status(400).json({ errors: { global: "error when creating user profile" }}))
-					// return user
 					res.json({ user: newUser.toAuth() })
 				})
 					.catch(err => res.status(400).json({ errors: { global: parseErrors(err.errors) }}))

@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production PORT=80 nodemon --exec babel-node -- src/index.js",
-    "start-dev": "cross-env NODE_ENV=development nodemon --exec babel-node -- src/index.js"
+    "start-dev": "cross-env NODE_ENV=development nodemon --exec babel-node -- src/index.js",
+    "cleaning": "rm -r -f ./src/build && rm -r -f ./itechs",
+    "updating": "npm run cleaning && git clone https://miraliko@bitbucket.org/miraliko/itechs.git && mv ./itechs/build ./src/build",
+    "git:push": "git add . && git commit -m 'api-deploy' && git push origin master",
+    "git:pull": "git pull origin master"
   },
   "keywords": [],
   "author": "",

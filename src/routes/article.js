@@ -29,7 +29,7 @@ router.get('/get-all-articles', (req, res) => {
 })
 
 router.get('/get-one-article/:id', (req, res) => {
-	const { id } = req.body;
+	const { id } = req.params;
 	Article.findByIdAndUpdate({ _id: id }, { $inc: { "pageview": 0.3 } }, (err, oneArticle) => {
 			if (err) return res.status(400).json({ NotFound: "Article Not Found" })
 			res.json({ oneArticle })
@@ -42,7 +42,7 @@ router.post('/like', (req, res, next) => {
 
 	Article.findById({ _id: id }, (err, article) => {
 
-		const check = article.like.filter(like => like.likedBy.includes(name))
+		const check = article.like.filter(like => like.likedBy === name)
 
 		if (!_.isEmpty(check)) {
 			Article.findByIdAndUpdate(article.id, {$pull: { like: { "likedBy": name } }}, {safe: true}, (err, art) => {

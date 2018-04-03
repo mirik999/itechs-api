@@ -44,7 +44,7 @@ if (process.env.NODE_ENV == 'production') {
     res.sendFile(path.join(__dirname, 'index.html'))
   });
 }
-// server start changed 31.03
+// server start changed 31.03.18
 app.server.listen(process.env.PORT || 4000, () =>
 	console.log(`listening on ${app.server.address().port}`)
 );
