@@ -1,36 +1,24 @@
 import mongoose from 'mongoose';
+import User from './user-model';
 
 const schema = new mongoose.Schema({
 	_id: mongoose.Schema.Types.ObjectId,
 	title: { type: String, required: true },
-	image: { type: String, required: true },
 	content: { type: String, required: true },
-	email: { type: String, required: true },
-	author: { type: String, required: true, index: true },
-	avatar: { type: String, required: true },
+	author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 	added: { type: Date, default: Date.now },
 	pageview: { type: Number, default: 0 },
 	disableComment: { type: Boolean },
-	tags: { type: String, default: false },
+	tags: { type: String, default: "" },
 	like: [
 		{
-			count: { type: Number, required: false },
-			likedBy: { type: String, required: true }
-		}
-	],
-	dislike: [
-		{
-			count: { type: Number, required: false },
-			dislikedBy: { type: String, required: true }
+			likedBy: { type: String }
 		}
 	],
 	comments: [
 		{
-			text: { type: String, required: true },
-			author: {
-				name: String,
-				avatar: String
-			},
+			text: { type: String },
+			author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 			date: { type: Date, default: Date.now }
 		}
 	]

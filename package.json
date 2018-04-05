@@ -6,7 +6,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production PORT=80 nodemon --exec babel-node -- src/index.js",
     "start-dev": "cross-env NODE_ENV=development nodemon --exec babel-node -- src/index.js",
-    "updating": "npm run cleaning && git clone https://miraliko@bitbucket.org/miraliko/itechs.git && mv ./itechs/build ./src/build",
+    "updating": "npm run cleaning && git clone https://miraliko@bitbucket.org/miraliko/itechs.git && mv ./itechs/build ./src/build && rm -r -f ./itechs",
     "updating:api": "npm run cleaning:api && git clone https://miraliko@bitbucket.org/miraliko/itechs-api.git && npm run move:api",
     "cleaning": "rm -r -f ./src/build && rm -r -f ./itechs",
     "cleaning:api": "rm -r -f ./itechs-api ./src/config ./src/images ./src/models ./src/routes ./src/utils ./src/index.html ./src/index.js",

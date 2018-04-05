@@ -58,7 +58,10 @@ router.post('/fblogin', (req, res) => {
       user.save().then((newUser) => {
         res.json({ user: newUser.toAuth() })
       })
-	      .catch(err => res.status(400).json({ errors: { global: parseErrors(err.errors) }}))
+	      .catch(err => {
+					console.log(err)
+					return res.status(400).json({ errors: { global: parseErrors(err.errors) }})
+				})
     }
   })
 });

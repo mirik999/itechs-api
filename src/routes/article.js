@@ -1,5 +1,6 @@
 import express from 'express';
 import Article from '../models/article-model';
+import User from '../models/user-model';
 import parseErrors from '../utils/parseErrors';
 import mongoose from 'mongoose';
 import _ from 'lodash';
@@ -7,20 +8,30 @@ import _ from 'lodash';
 const router = express.Router();
 
 router.post('/new-article', (req, res) => {
-	const { content, avatar, author, email, title, image, tags, disableComment } = req.body.data;
-	const articles = new Article({ _id: new mongoose.Types.ObjectId(),
-		content, avatar, email, author, title, image, tags, disableComment
+	const { content, settings, me } = req.body.data;
+
+	const articles = new Article({
+		_id: new mongoose.Types.ObjectId(),
+		author: me,
+		content: content,
+		title: settings.title,
+		disableComment: settings.disableComment
 	})
-		articles
+	articles
 		.save()
 		.then(article => {
 			res.json({ article })
 		})
-		.catch(err => res.status(400).json({ errors: { global: parseErrors(err.errors) }}))
+		.catch(err => {
+			console.log(err)	
+			return res.status(400).json({ errors: { global: parseErrors(err.errors) }})
+		})
 })
 
 router.get('/get-all-articles', (req, res) => {
 	Article.find({})
+		.populate('author', 'email useravatar username about contact portfolio github')
+		.populate('comments.author')
 		.sort('-added')
 		.exec((err, articles) => {
 			if (err) return res.status(400).json({ WentWrong: "Something Went Wrong When System Getting all articles" })
@@ -30,7 +41,10 @@ router.get('/get-all-articles', (req, res) => {
 
 router.get('/get-one-article/:id', (req, res) => {
 	const { id } = req.params;
-	Article.findByIdAndUpdate({ _id: id }, { $inc: { "pageview": 0.3 } }, (err, oneArticle) => {
+	Article.findByIdAndUpdate({ _id: id }, { $inc: { "pageview": 0.5 } })
+		.populate('author', 'email useravatar username about contact portfolio github')
+		.populate('comments.author')
+		.exec((err, oneArticle) => {
 			if (err) return res.status(400).json({ NotFound: "Article Not Found" })
 			res.json({ oneArticle })
 		})

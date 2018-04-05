@@ -4,7 +4,6 @@ import uniqueValidator from 'mongoose-unique-validator';
 import bcrypt from 'bcrypt';
 
 const schema = new mongoose.Schema({
-	_id: mongoose.Schema.Types.ObjectId,
   username: { type: String, required: true, unique: true, index: true, trim: true },
   email: { type: String, required: true, unique: true, index: true, lowercase: true, trim: true },
 	passwordHash: { type: String },
@@ -15,10 +14,10 @@ const schema = new mongoose.Schema({
 	userip: { type: String, required: true },
   accessToken: { type: String },
   date: { type: Date, default: Date.now },
-  about: { type: String },
-	portfolio: { type: String },
-	contact: { type: String },
-	github: { type: String },
+  about: { type: String, default: "" },
+	portfolio: { type: String, default: "" },
+	contact: { type: String, default: "" },
+	github: { type: String, default: "" },
 	bgImg: { type: String, default: "http://res.cloudinary.com/developers/image/upload/v1513099538/ynufy8bwqn1qrwdxcinh.png" },
 	smallImage: { type: String, default: "http://res.cloudinary.com/developers/image/upload/c_scale,w_300/v1513099538/ynufy8bwqn1qrwdxcinh.png" },
 	followedUsers: [
@@ -37,6 +36,7 @@ const schema = new mongoose.Schema({
 	]
 });
 
+
 schema.methods.setPassword = function setPassword(password) {
 	this.passwordHash = bcrypt.hashSync(password, 10)
 };
@@ -53,7 +53,7 @@ schema.methods.generateJWT = function generateJWT() {
 
 schema.methods.toAuth = function toAuth() {
   return {
-    email: this.email,
+		email: this.email,
     token: this.generateJWT()
   }
 };
