@@ -55,9 +55,7 @@ router.post('/fblogin', (req, res) => {
         useravatar: req.body.data.picture.data.url,
 	      userip: ip
       })
-      user.save().then((newUser) => {
-        res.json({ user: newUser.toAuth() })
-      })
+      user.save().then((newUser) => res.json({ user: newUser.toAuth() }))
 	      .catch(err => {
 					console.log(err)
 					return res.status(400).json({ errors: { global: parseErrors(err.errors) }})
@@ -81,9 +79,7 @@ router.post('/gglogin', (req, res) => {
 					useravatar: req.body.data.imageUrl,
 					userip: ip
 				})
-				user.save().then((newUser) => {
-					res.json({ user: newUser.toAuth() })
-				})
+				user.save().then((newUser) => res.json({ user: newUser.toAuth() }))
 					.catch(err => res.status(400).json({ errors: { global: parseErrors(err.errors) }}))
 			}
 		})

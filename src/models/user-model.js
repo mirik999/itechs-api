@@ -4,8 +4,8 @@ import uniqueValidator from 'mongoose-unique-validator';
 import bcrypt from 'bcrypt';
 
 const schema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true, index: true, trim: true },
-  email: { type: String, required: true, unique: true, index: true, lowercase: true, trim: true },
+  username: { type: String, required: true, unique: true, trim: true },
+  email: { type: String, required: true, unique: true, lowercase: true, trim: true },
 	passwordHash: { type: String },
   facebookId: { type: String },
   githubId: { type: String },
@@ -23,15 +23,15 @@ const schema = new mongoose.Schema({
 	followedUsers: [
 		{ 
       _id: { type: mongoose.Schema.Types.ObjectId },
-			followedUserName: { type: String, unique: true, index: true },
-			followedUserEmail: { type: String, unique: true, index: true }	
+			followedUserName: { type: String, unique: true },
+			followedUserEmail: { type: String, unique: true }	
 		}
 	],
 	myFollows: [
 		{ 
       _id: { type: mongoose.Schema.Types.ObjectId },
-			followedUserName: { type: String, unique: true, index: true },
-			followedUserEmail: { type: String, unique: true, index: true }	
+			followedUserName: { type: String, unique: true },
+			followedUserEmail: { type: String, unique: true }	
 		}
 	]
 });

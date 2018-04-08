@@ -4,14 +4,12 @@ import Article from '../models/article-model';
 const router = express.Router();
 
 router.post('/add-comment', (req, res) => {
-	const { id, content, author, avatar } = req.body.data;
+	const { id, content, userID } = req.body.data;
 	Article.findByIdAndUpdate({ _id: id }, {
 			$push: {
 				comments: {
-						text: content, author: {
-						name: author,
-						avatar: avatar
-					}
+						text: content, 
+						author: userID
 				}
 			}
 		}, (err, comment) => {
@@ -21,7 +19,7 @@ router.post('/add-comment', (req, res) => {
 })
 
 router.delete('/del-comment/:id', (req, res) => {
-	const { commentid, articleid } = req.body.data;
+	const { commentid, articleid } = req.body;
 	Article.findOneAndUpdate({ _id: articleid }, {
 		$pull: {
 			comments: { _id: commentid }

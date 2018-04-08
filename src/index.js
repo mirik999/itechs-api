@@ -14,9 +14,8 @@ import article from './routes/article';
 import feedback from './routes/feedback';
 import comment from './routes/comment';
 import profile from './routes/profile';
-// connect to mongodb
+// bluebird
 mongoose.Promise = Promise;
-mongoose.connect(keys.mongoDB.db, { useMongoClient: true }, () => console.log('Mongo started'));
 // server settings
 dotenv.config();
 const app = express();
@@ -35,11 +34,13 @@ app.use('/api/comment', comment);
 app.use('/api/profile', profile);
 // development and production
 if (process.env.NODE_ENV == 'production') {
+  mongoose.connect(keys.mongoDB.Prod, { useMongoClient: true }, () => console.log('Mongo started prod-mode'));
   app.use(express.static(path.join(__dirname, 'build')));
   app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'build', 'index.html'))
   });
 } else if (process.env.NODE_ENV == 'development') {
+  mongoose.connect(keys.mongoDB.Dev, { useMongoClient: true }, () => console.log('Mongo started dev-mode'));
   app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'))
   });

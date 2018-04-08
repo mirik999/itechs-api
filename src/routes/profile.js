@@ -13,6 +13,14 @@ router.get('/get-profile/:email', (req, res) => {
 	})
 })
 
+router.get('/get-profile-by-name/:name', (req, res) => { 
+	const { name } = req.params;
+	User.findOne({ username: name }, (err, userprofile) => {
+		if (err) res.status(400).json({ WentWrong: "Something went wrong when getting profileByName" })
+		res.json({ userprofile })
+	})
+})
+
 router.put('/editing/:email', (req, res) => {
 	const { email, about, portfolio, contact, github } = req.body.data;
 		User.findOneAndUpdate({ email }, { $set: { about, portfolio, contact, github	} }, (err, user) => {

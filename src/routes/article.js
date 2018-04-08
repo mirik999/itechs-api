@@ -31,7 +31,7 @@ router.post('/new-article', (req, res) => {
 router.get('/get-all-articles', (req, res) => {
 	Article.find({})
 		.populate('author', 'email useravatar username about contact portfolio github')
-		.populate('comments.author')
+		.populate('comments.author', 'email useravatar username about contact portfolio github')
 		.sort('-added')
 		.exec((err, articles) => {
 			if (err) return res.status(400).json({ WentWrong: "Something Went Wrong When System Getting all articles" })
@@ -43,7 +43,7 @@ router.get('/get-one-article/:id', (req, res) => {
 	const { id } = req.params;
 	Article.findByIdAndUpdate({ _id: id }, { $inc: { "pageview": 0.5 } })
 		.populate('author', 'email useravatar username about contact portfolio github')
-		.populate('comments.author')
+		.populate('comments.author', 'email useravatar username about contact portfolio github')
 		.exec((err, oneArticle) => {
 			if (err) return res.status(400).json({ NotFound: "Article Not Found" })
 			res.json({ oneArticle })
