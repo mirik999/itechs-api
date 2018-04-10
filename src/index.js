@@ -7,21 +7,29 @@ import mongoose from 'mongoose';
 import Promise from 'bluebird';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import _ from 'lodash';
+import socket from 'socket.io';
+// mySettings
 import keys from './config/keys';
 // routes
 import auth from './routes/authenticate';
 import article from './routes/article';
 import feedback from './routes/feedback';
-import comment from './routes/comment';
 import profile from './routes/profile';
+import Article from './models/article-model';
+// sockets
+import comments from './sockets/comment-sockets';
 // bluebird
 mongoose.Promise = Promise;
 // server settings
 dotenv.config();
 const app = express();
-app.server = http.createServer(app);
+const server = http.createServer(app);
+const io = socket(server);
 const emitter = new EventEmitter();
 emitter.setMaxListeners(20);
+// sockets calling
+comments(server, io)
 // set middleware
 app.use(cors());
 app.use(bodyParser.json({ limit: '50mb', type: 'application/json' }));
@@ -30,7 +38,6 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use('/api/auth', auth);
 app.use('/api/article', article);
 app.use('/api/feedback', feedback);
-app.use('/api/comment', comment);
 app.use('/api/profile', profile);
 // development and production
 if (process.env.NODE_ENV == 'production') {
@@ -45,7 +52,8 @@ if (process.env.NODE_ENV == 'production') {
     res.sendFile(path.join(__dirname, 'index.html'))
   });
 }
-// server start changed 31.03.18
-app.server.listen(process.env.PORT || 4000, () =>
-	console.log(`listening on ${app.server.address().port}`)
+// server port and start
+server.listen(process.env.PORT || 4000, () =>
+	console.log(`listening on ${server.address().port}`)
 );
+  
