@@ -8,14 +8,15 @@ import _ from 'lodash';
 const router = express.Router();
 
 router.post('/new-article', (req, res) => {
-	const { content, settings, me } = req.body.data;
-
+	const { thumbnail, content, settings, me } = req.body.data;
+	
 	const articles = new Article({
 		_id: new mongoose.Types.ObjectId(),
 		author: me,
 		content: content,
 		title: settings.title,
-		disableComment: settings.disableComment
+		disableComment: settings.disableComment,
+		thumbnail: thumbnail
 	})
 	articles
 		.save()
@@ -49,6 +50,7 @@ router.get('/get-one-article/:id', (req, res) => {
 			res.json({ oneArticle })
 		})
 })
+
 
 // like system
 router.post('/like', (req, res, next) => {

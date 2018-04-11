@@ -30,7 +30,8 @@ router.post('/register', (req, res) => {
 
 router.post('/enter', (req, res) => {
 	const { email, pass } = req.body.data;
-	User.findOne({ email }).then(user => {
+	User.findOne({ email })
+	.then(user => {
 		if (user && user.isValidPassword(pass)) {
 			res.json({ user: user.toAuth() })
 		} else {

@@ -10,6 +10,7 @@ const schema = new mongoose.Schema({
 	pageview: { type: Number, default: 0 },
 	disableComment: { type: Boolean },
 	tags: { type: String, default: "" },
+	thumbnail: { type: Array, default: "" },
 	like: [
 		{
 			likedBy: { type: String }

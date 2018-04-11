@@ -2,7 +2,10 @@ import Article from '../models/article-model';
 
 module.exports = function (server, io) {
 
+  let connections = [];
+
   io.on('connection', socket => {
+    connections.push(socket.id)
 
     socket.on('onComment', data => {
       const { articleID, userID, handleID, text } = data;
@@ -48,6 +51,11 @@ module.exports = function (server, io) {
         if (err) return res.status(400).json({ DelCommentError: "Something went wrong, try again" })
         io.sockets.emit('delComment', article.comments)
       })
+    })
+
+    //disconnect user
+    socket.on('disconnect', data => {
+      connections.slice(connections.indexOf(socket.id), 1);
     })
 
   })
