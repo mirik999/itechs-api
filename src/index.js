@@ -9,6 +9,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import _ from 'lodash';
 import socket from 'socket.io';
+import helmet from 'helmet';
 // mySettings
 import keys from './config/keys';
 // routes
@@ -31,7 +32,11 @@ emitter.setMaxListeners(20);
 // sockets calling
 comments(server, io)
 // set middleware
-app.use(cors());
+app.use(cors({
+  'allowedHeaders': ['Accept', 'Content-Type', 'Origin', 'X-Requested-With'],
+  'origin': '*',
+}));
+app.use(helmet());
 app.use(bodyParser.json({ limit: '50mb', type: 'application/json' }));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 // routing
@@ -39,7 +44,7 @@ app.use('/api/auth', auth);
 app.use('/api/article', article);
 app.use('/api/feedback', feedback);
 app.use('/api/profile', profile);
-// development and production
+// prod and dev mode
 if (process.env.NODE_ENV == 'production') {
   mongoose.connect(keys.mongoDB.Prod, { useMongoClient: true }, () => console.log('Mongo started prod-mode'));
   app.use(express.static(path.join(__dirname, 'build')));

@@ -9,7 +9,7 @@
     "updating:ui": "npm run cleaning && git clone https://miraliko@bitbucket.org/miraliko/itechs.git && mv ./itechs/build ./src/build && rm -r -f ./itechs",
     "updating:api": "npm run cleaning:api && git clone https://miraliko@bitbucket.org/miraliko/itechs-api.git && npm run move:api",
     "cleaning": "rm -r -f ./src/build && rm -r -f ./itechs",
-    "cleaning:api": "rm -r -f ./itechs-api ./src/config ./src/images ./src/models ./src/routes ./src/utils ./src/index.html ./src/index.js",
+    "cleaning:api": "rm -r -f ./itechs-api ./src/config ./src/images ./src/sockets ./src/models ./src/routes ./src/utils ./src/index.html ./src/index.js",
     "move:api": "mv ./itechs-api/src/* ./src/ && mv ./itechs-api/package.json ./ && rm -r -f ./itechs-api",
     "git:push": "git add . && git commit -m 'api-deploy' && git push origin master"
   },
@@ -25,6 +25,7 @@
     "cors": "^2.8.4",
     "dotenv": "^4.0.0",
     "express": "^4.16.2",
+    "helmet": "^3.12.0",
     "jsonwebtoken": "^8.1.0",
     "lodash": "^4.17.4",
     "mongoose": "^4.13.4",
