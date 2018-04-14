@@ -8,7 +8,7 @@ import _ from 'lodash';
 const router = express.Router();
 
 router.post('/new-article', (req, res) => {
-	const { thumbnail, content, settings, me } = req.body.data;
+	const { articleImages, thumbnail, content, settings, me } = req.body.data;
 	
 	const articles = new Article({
 		_id: new mongoose.Types.ObjectId(),
@@ -16,7 +16,9 @@ router.post('/new-article', (req, res) => {
 		content: content,
 		title: settings.title,
 		disableComment: settings.disableComment,
-		thumbnail: thumbnail
+		articleImages: articleImages,
+		thumbnail: settings.thumbnail,
+		thumbnailSmall: settings.thumbnailSmall
 	})
 	articles
 		.save()

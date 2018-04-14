@@ -10,7 +10,9 @@ const schema = new mongoose.Schema({
 	pageview: { type: Number, default: 0 },
 	disableComment: { type: Boolean },
 	tags: { type: String, default: "" },
-	thumbnail: { type: Array, default: "" },
+	articleImages: { type: Array, default: "" },
+	thumbnail: { type: String, default: "https://res.cloudinary.com/developers/image/upload/v1523722896/tgjxvrfzp15umewwcbtj.jpg" },
+	thumbnailSmall: { type: String, default: "https://res.cloudinary.com/developers/image/upload/w_50,h_50/v1523722896/tgjxvrfzp15umewwcbtj.jpg" },
 	like: [
 		{
 			likedBy: { type: String }
