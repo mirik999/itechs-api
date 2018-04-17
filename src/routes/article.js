@@ -54,6 +54,32 @@ router.get('/get-one-article/:id', (req, res) => {
 })
 
 
+router.put('/edit-article/:id', (req, res) => {
+	const { id } = req.params;
+	const { data } = req.body;
+
+	Article.findByIdAndUpdate({ _id: id }, { 
+		$inc: { "pageview": 0.5 },
+		content: data.editorState,
+		articleImages: data.articleImages 
+	})
+		.populate('author', 'email useravatar username about contact portfolio github')
+		.populate('comments.author', 'email useravatar username about contact portfolio github')
+		.exec((err, editedArticle) => {
+			if (err) return res.status(400).json({ NotFound: "Article Not Found" })
+			res.json({ editedArticle })
+		})
+})
+
+router.delete('/delete-article/:id', (req, res) => {
+	const { id } = req.params;
+
+	Article.findByIdAndRemove({ _id: id }, (err, articles) => {
+		if (err) return res.status(400).json({ NotFound: "Article Not Found" })
+		res.json({ articles })
+	})
+})
+
 // like system
 router.post('/like', (req, res, next) => {
 	const { name, id } = req.body.data;

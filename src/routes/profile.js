@@ -31,7 +31,7 @@ router.put('/editing/:email', (req, res) => {
 
 router.put('/change-cover/:email', (req, res) => {
 	const { bgImg, smallImage, email } = req.body.data;
-	User.findOneAndUpdate({ email }, { $set: { bgImg, smallImage } }, (err, userprofile) => {
+	User.findOneAndUpdate({ email }, { $set: { bgImg, smallImage } }, { new: true }, (err, userprofile) => {
 		if (err) res.status(400).json({ WentWrong: "Something went wrong when changing profile cover image" })
 		res.json({ userprofile })
 	})
