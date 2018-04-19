@@ -17,8 +17,8 @@ router.post('/new-article', (req, res) => {
 		title: settings.title,
 		disableComment: settings.disableComment,
 		articleImages: articleImages,
-		thumbnail: settings.thumbnail,
-		thumbnailSmall: settings.thumbnailSmall
+		thumbnail: settings.thumbnail || "https://res.cloudinary.com/developers/image/upload/v1523722896/tgjxvrfzp15umewwcbtj.jpg",
+		thumbnailSmall: settings.thumbnailSmall || "https://res.cloudinary.com/developers/image/upload/w_50,h_50/v1523722896/tgjxvrfzp15umewwcbtj.jpg"
 	})
 	articles
 		.save()

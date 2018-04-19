@@ -11,8 +11,8 @@ const schema = new mongoose.Schema({
 	disableComment: { type: Boolean },
 	tags: { type: String, default: "" },
 	articleImages: { type: Array, default: "" },
-	thumbnail: { type: String, default: "https://res.cloudinary.com/developers/image/upload/v1523722896/tgjxvrfzp15umewwcbtj.jpg" },
-	thumbnailSmall: { type: String, default: "https://res.cloudinary.com/developers/image/upload/w_50,h_50/v1523722896/tgjxvrfzp15umewwcbtj.jpg" },
+	thumbnail: { type: String },
+	thumbnailSmall: { type: String },
 	like: [
 		{
 			likedBy: { type: String }
@@ -21,6 +21,7 @@ const schema = new mongoose.Schema({
 	comments: [
 		{
 			handleID: { type: Number },
+			articleID: { type: String },
 			text: { type: String },
 			author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 			date: { type: Date, default: Date.now }

@@ -22,16 +22,12 @@ const schema = new mongoose.Schema({
 	smallImage: { type: String, default: "http://res.cloudinary.com/developers/image/upload/c_scale,w_300/v1513099538/ynufy8bwqn1qrwdxcinh.png" },
 	followedUsers: [
 		{ 
-      _id: { type: mongoose.Schema.Types.ObjectId },
-			followedUserName: { type: String, unique: true },
-			followedUserEmail: { type: String, unique: true }	
+			user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } 
 		}
 	],
 	myFollows: [
 		{ 
-      _id: { type: mongoose.Schema.Types.ObjectId },
-			followedUserName: { type: String, unique: true },
-			followedUserEmail: { type: String, unique: true }	
+			user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } 
 		}
 	]
 });

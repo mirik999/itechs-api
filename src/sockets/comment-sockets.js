@@ -12,8 +12,9 @@ module.exports = function (server, io) {
         Article.findByIdAndUpdate({ _id: articleID }, {
             $push: {
               comments: {
-                  handleID: handleID,
-                  text: text, 
+                  handleID,
+                  articleID,
+                  text, 
                   author: userID
               }
             }

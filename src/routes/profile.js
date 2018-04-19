@@ -7,7 +7,10 @@ const router = express.Router();
 
 router.get('/get-profile/:email', (req, res) => { 
 	const { email } = req.params;
-	User.findOne({ email }, (err, userprofile) => {
+	User.findOne({ email })
+	.populate('myFollows.user', 'email useravatar username about contact portfolio github')
+	.populate('followedUsers.user', 'email useravatar username about contact portfolio github')
+	.exec((err, userprofile) => {
 		if (err) res.status(400).json({ WentWrong: "Something went wrong when getting profile" })
 		res.json({ userprofile })
 	})
@@ -38,24 +41,34 @@ router.put('/change-cover/:email', (req, res) => {
 })
 
 
-// follow
+// follow =-=-= best system ever
 router.post('/follow-user', (req, res, next) => {
 	// kimi follow edirsen 1-ci ozune elave olunur
-	const { followUserEmail, followUserName, myEmail } = req.body.data;
+	const { myID, followUserID } = req.body.data;
 
-	User.findOne({ email: myEmail }, (err, user) => {
+	User.findOne({ _id: myID }, (err, user) => {
 		
-		const check = user.myFollows.filter(user => user.followedUserEmail === followUserEmail)
+		const check = user.myFollows.filter(user => user.user == followUserID)
 
 		if (_.isEmpty(check)) {
-			User.findByIdAndUpdate(user._id, {$push: { myFollows: { "followedUserName": followUserName, "followedUserEmail": followUserEmail,  } }}, 
-			{safe: true}, (err, usr) => {
+			User.findByIdAndUpdate(user._id, 
+				{$push: { 
+					myFollows: { 
+						user: followUserID 
+					} 
+				}}, {new: true}, 
+		    (err, usr) => {
 				if(err)	return res.status(400).json({ myFollows: "Something went wrong" }); 
 				next();
 			});
 		} else {
-			User.findByIdAndUpdate(user._id, {$pull: { myFollows: { "followedUserName": followUserName, "followedUserEmail": followUserEmail,   } }}, 
-			{safe: true}, (err, usr) => {
+			User.findByIdAndUpdate(user._id, {
+				$pull: { 
+					myFollows: { 
+						user: followUserID 
+					} 
+				}}, {new: true}, 
+			(err, usr) => {
 				if(err)	return res.status(400).json({ myFollows: "Something went wrong" }); 
 				next();
 			});
@@ -64,23 +77,33 @@ router.post('/follow-user', (req, res, next) => {
 
 }, (req, res) => {
 	// 2-c onun sxemasina
-	const { followUserEmail, myUserName, myEmail } = req.body.data;
+	const { myID, followUserID } = req.body.data;
 
-	User.findOne({ email: followUserEmail }, (err, user) => {
+	User.findOne({ _id: followUserID }, (err, user) => {
 
-		const check = user.followedUsers.filter(user => user.followedUserEmail === myEmail)
+		const check = user.followedUsers.filter(user => user.user == myID)
 
 		if (_.isEmpty(check)) {
-			User.findByIdAndUpdate(user._id, {$push: { followedUsers: { "followedUserName": myUserName, "followedUserEmail": myEmail,  } }}, 
-			{safe: true}, (err, usr) => {
+			User.findByIdAndUpdate(user._id, {
+				$push: { 
+					followedUsers: { 
+						user: myID 
+					} 
+				}}, {new: true}, 
+			(err, usr) => {
 				if(err)	return res.status(400).json({ followedUsers: "Something went wrong" }); 
-				else return res.json({ followedUsers: true });
+				else return res.json({ userprofile: usr });
 			});
 		} else {
-			User.findByIdAndUpdate(user._id, {$pull: { followedUsers: { "followedUserName": myUserName, "followedUserEmail": myEmail,   } }}, 
-			{safe: true}, (err, usr) => {
+			User.findByIdAndUpdate(user._id, {
+				$pull: { 
+					followedUsers: { 
+						user: myID 
+					} 
+				}}, {new: true}, 
+			(err, usr) => {
 				if(err)	return res.status(400).json({ followedUsers: "Something went wrong" }); 
-				else return res.json({ followedUsers: false });
+				else return res.json({ userprofile: usr });
 			});
 		}
 	})
