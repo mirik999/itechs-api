@@ -6,6 +6,11 @@ import parseErrors from '../utils/parseErrors';
 
 const router = express.Router();
 
+function toTitleCase(str)
+{
+  return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}).replace(" ", "");
+}
+
 router.post('/register', (req, res) => {
 	const { uname, email, pass } = req.body.data;
 	const uniqueNick = `${uname.trim()}${Math.floor(Math.random() * 100)}`;
@@ -13,7 +18,7 @@ router.post('/register', (req, res) => {
 	const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 	const user = new User({
 		_id: new mongoose.Types.ObjectId(),
-		username: uname.replace(" ", ""),
+		username: toTitleCase(uname),
 		email: email,
 		useravatar: avatar,
 		userip: ip
