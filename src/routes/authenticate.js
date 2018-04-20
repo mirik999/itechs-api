@@ -13,7 +13,7 @@ router.post('/register', (req, res) => {
 	const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 	const user = new User({
 		_id: new mongoose.Types.ObjectId(),
-		username: uname,
+		username: uname.replace(" ", ""),
 		email: email,
 		useravatar: avatar,
 		userip: ip
