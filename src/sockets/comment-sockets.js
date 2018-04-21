@@ -19,12 +19,11 @@ module.exports = function (server, io) {
               }
             }
           }, { new: true })
-          .populate('comments.author', 'email useravatar username about contact portfolio github')
+          .populate('comments.author', 'email useravatar username about contact portfolio github bgImg smallImage')
           .exec((err, article) => {
             if (err) return res.status(400).json({ AddCommentError: "Something went wrong, try again" })
             const addedComment = article.comments.filter(com => com.handleID === handleID)[0]
-            data.date = addedComment.date;
-            io.sockets.emit('onComment', data)
+            io.sockets.emit('onComment', addedComment)
         })
     })
 
@@ -33,7 +32,7 @@ module.exports = function (server, io) {
       Article.findOneAndUpdate({ _id: articleID, "comments.handleID": handleID },{
         $set: { "comments.$.text" : text },
         }, { new: true })
-        .populate('comments.author', 'email useravatar username about contact portfolio github')
+        .populate('comments.author', 'email useravatar username about contact portfolio github bgImg smallImage')
         .exec((err, article) => {
           if (err) return res.status(400).json({ DelCommentError: "Something went wrong, try again" })
           io.sockets.emit('editComment', article.comments)
@@ -47,7 +46,7 @@ module.exports = function (server, io) {
           comments: { handleID }
         }
       }, { new: true })
-      .populate('comments.author', 'email useravatar username about contact portfolio github')
+      .populate('comments.author', 'email useravatar username about contact portfolio github bgImg smallImage')
       .exec((err, article) => {
         if (err) return res.status(400).json({ DelCommentError: "Something went wrong, try again" })
         io.sockets.emit('delComment', article.comments)

@@ -33,8 +33,8 @@ router.post('/new-article', (req, res) => {
 
 router.get('/get-all-articles', (req, res) => {
 	Article.find({})
-		.populate('author', 'email useravatar username about contact portfolio github')
-		.populate('comments.author', 'email useravatar username about contact portfolio github')
+		.populate('author', 'email useravatar username about contact portfolio github bgImg smallImage')
+		.populate('comments.author', 'email useravatar username about contact portfolio github bgImg smallImage')
 		.sort('-added')
 		.exec((err, articles) => {
 			if (err) return res.status(400).json({ WentWrong: "Something Went Wrong When System Getting all articles" })
@@ -45,8 +45,8 @@ router.get('/get-all-articles', (req, res) => {
 router.get('/get-one-article/:id', (req, res) => {
 	const { id } = req.params;
 	Article.findByIdAndUpdate({ _id: id }, { $inc: { "pageview": 0.5 } })
-		.populate('author', 'email useravatar username about contact portfolio github')
-		.populate('comments.author', 'email useravatar username about contact portfolio github')
+		.populate('author', 'email useravatar username about contact portfolio github bgImg smallImage')
+		.populate('comments.author', 'email useravatar username about contact portfolio github bgImg smallImage')
 		.exec((err, oneArticle) => {
 			if (err) return res.status(400).json({ NotFound: "Article Not Found" })
 			res.json({ oneArticle })
@@ -63,8 +63,8 @@ router.put('/edit-article/:id', (req, res) => {
 		content: data.editorState,
 		articleImages: data.articleImages 
 	})
-		.populate('author', 'email useravatar username about contact portfolio github')
-		.populate('comments.author', 'email useravatar username about contact portfolio github')
+		.populate('author', 'email useravatar username about contact portfolio github bgImg smallImage')
+		.populate('comments.author', 'email useravatar username about contact portfolio github bgImg smallImage')
 		.exec((err, editedArticle) => {
 			if (err) return res.status(400).json({ NotFound: "Article Not Found" })
 			res.json({ editedArticle })
