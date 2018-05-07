@@ -1,11 +1,51 @@
 import Article from '../models/article-model';
+import User from '../models/user-model';
 
 module.exports = function (server, io) {
 
   let connections = [];
+  let myID;
 
-  io.on('connection', socket => {
+
+  io.sockets.on('connection', socket => {
     connections.push(socket.id)
+
+    // ########################### ONLINE - OFFLINE ########################### 
+
+    User.find({ online: true }, (err, users) => {
+      socket.broadcast.emit('onlineList', users)
+    });
+
+    socket.on('userOnline', data => {
+      User.findOneAndUpdate({ _id: data.myID }, {
+        $set: {
+          online: true,
+          socketID: socket.id
+        }
+      }).exec((err, foundUser) => {
+        if (err) console.log(err);
+        // return all users
+        User.find({ online: true }, (err, users) => {
+          socket.broadcast.emit('onlineList', users)
+        });
+      })
+    })
+
+    socket.on('userOffline', data => {
+      User.findOneAndUpdate({ _id: data.myID }, {
+        $set: {
+          online: false,
+          socketID: null
+        }
+      }).exec((err, foundUser) => {
+        if (err) console.log(err);
+        // logout-dan sonra re-render olur ve birinci socket ishleyir , ona gore burda hecne gondermirik.
+      })
+    })
+
+
+
+    // ############################## COMMENTS ##############################
 
     socket.on('onComment', data => {
       const { articleID, userID, handleID, text } = data;
@@ -53,9 +93,20 @@ module.exports = function (server, io) {
       })
     })
 
-    //disconnect user
-    socket.on('disconnect', data => {
-      connections.slice(connections.indexOf(socket.id), 1);
+    // ################################ disconnect ###################################
+    socket.on('disconnect', () => {
+      connections.splice(connections.indexOf(socket.id), 1);
+      User.findOneAndUpdate({ socketID: socket.id }, {
+        $set: {
+          online: false,
+          socketID: null
+        }
+      }).exec((err, foundUser) => {
+        if (err) console.log(err);
+        User.find({ online: true }, (err, users) => {
+          socket.broadcast.emit('onlineList', users)
+        });
+      })
     })
 
   })

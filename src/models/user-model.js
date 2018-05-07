@@ -29,7 +29,9 @@ const schema = new mongoose.Schema({
 		{ 
 			user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } 
 		}
-	]
+	],
+	online: { type: Boolean, default: false },
+	socketID: { type: String }
 });
 
 

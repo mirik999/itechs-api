@@ -19,7 +19,7 @@ import feedback from './routes/feedback';
 import profile from './routes/profile';
 import Article from './models/article-model';
 // sockets
-import comments from './sockets/comment-sockets';
+import sockets from './sockets/sockets';
 // bluebird
 mongoose.Promise = Promise;
 // server settings
@@ -30,7 +30,7 @@ const io = socket(server);
 const emitter = new EventEmitter();
 emitter.setMaxListeners(20);
 // sockets calling
-comments(server, io)
+sockets(server, io);
 // set middleware
 app.use(cors({
   'allowedHeaders': ['Accept', 'Content-Type', 'Origin', 'X-Requested-With'],
