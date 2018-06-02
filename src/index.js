@@ -17,7 +17,7 @@ import auth from './routes/authenticate';
 import article from './routes/article';
 import feedback from './routes/feedback';
 import profile from './routes/profile';
-import Article from './models/article-model';
+import chat from './routes/chat';
 // sockets
 import sockets from './sockets/sockets';
 // bluebird
@@ -44,6 +44,7 @@ app.use('/api/auth', auth);
 app.use('/api/article', article);
 app.use('/api/feedback', feedback);
 app.use('/api/profile', profile);
+app.use('/api/chat', chat);
 // prod and dev mode
 if (process.env.NODE_ENV == 'production') {
   mongoose.connect(keys.mongoDB.Prod, { useMongoClient: true }, () => console.log('Mongo started prod-mode'));

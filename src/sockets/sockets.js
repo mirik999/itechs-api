@@ -1,18 +1,15 @@
+import mongoose from 'mongoose';
 import Article from '../models/article-model';
 import User from '../models/user-model';
+import Chat from '../models/chat-model';
 
 module.exports = function (server, io) {
 
-  let connections = [];
-  let myID;
-
-
   io.sockets.on('connection', socket => {
-    connections.push(socket.id)
 
-    // ########################### ONLINE - OFFLINE ########################### 
+  // ########################### ONLINE - OFFLINE ########################### 
 
-    User.find({ online: true }, (err, users) => {
+    User.find({}, (err, users) => {
       socket.broadcast.emit('onlineList', users)
     });
 
@@ -25,7 +22,7 @@ module.exports = function (server, io) {
       }).exec((err, foundUser) => {
         if (err) console.log(err);
         // return all users
-        User.find({ online: true }, (err, users) => {
+        User.find({}, (err, users) => {
           socket.broadcast.emit('onlineList', users)
         });
       })
@@ -43,9 +40,7 @@ module.exports = function (server, io) {
       })
     })
 
-
-
-    // ############################## COMMENTS ##############################
+  // ############################## COMMENTS ##############################
 
     socket.on('onComment', data => {
       const { articleID, userID, handleID, text } = data;
@@ -59,7 +54,7 @@ module.exports = function (server, io) {
               }
             }
           }, { new: true })
-          .populate('comments.author', 'email useravatar username about contact portfolio github bgImg smallImage')
+          .populate('comments.author', 'email useravatar username about contact portfolio github bgImg smallImage socketID')
           .exec((err, article) => {
             if (err) return res.status(400).json({ AddCommentError: "Something went wrong, try again" })
             const addedComment = article.comments.filter(com => com.handleID === handleID)[0]
@@ -72,7 +67,7 @@ module.exports = function (server, io) {
       Article.findOneAndUpdate({ _id: articleID, "comments.handleID": handleID },{
         $set: { "comments.$.text" : text },
         }, { new: true })
-        .populate('comments.author', 'email useravatar username about contact portfolio github bgImg smallImage')
+        .populate('comments.author', 'email useravatar username about contact portfolio github bgImg smallImage socketID')
         .exec((err, article) => {
           if (err) return res.status(400).json({ DelCommentError: "Something went wrong, try again" })
           io.sockets.emit('editComment', article.comments)
@@ -86,16 +81,50 @@ module.exports = function (server, io) {
           comments: { handleID }
         }
       }, { new: true })
-      .populate('comments.author', 'email useravatar username about contact portfolio github bgImg smallImage')
+      .populate('comments.author', 'email useravatar username about contact portfolio github bgImg smallImage socketID')
       .exec((err, article) => {
         if (err) return res.status(400).json({ DelCommentError: "Something went wrong, try again" })
         io.sockets.emit('delComment', article.comments)
       })
     })
 
-    // ################################ disconnect ###################################
+  // ############################### private message ##############################
+
+    socket.on('loadChatHistory', data => {
+      Chat.find({})
+        .populate('message.author', 'email useravatar username about contact portfolio github bgImg smallImage socketID')
+        .populate('message.reciever', 'email useravatar username about contact portfolio github bgImg smallImage socketID')
+        .exec((err, messages) => {
+          if (err) return res.status(400).json({ WentWrong: "Something Went Wrong When System Getting all articles" })
+          socket.emit('loadChatHistory', messages)
+        })
+    })
+
+    socket.on('privateMessage', data => {
+      if (data.reciever.socketID === null) {
+        new Chat({
+          _id: new mongoose.Types.ObjectId(),
+          message: {
+            text: data.message,
+            author: data.author._id,
+            reciever: data.reciever._id
+          }
+        }).save()
+      } else {
+        socket.to(data.reciever.socketID).emit('privateMessageResponse', data);
+        new Chat({
+          _id: new mongoose.Types.ObjectId(),
+          message: {
+            text: data.message,
+            author: data.author._id,
+            reciever: data.reciever._id
+          }
+        }).save()
+      }
+    })
+
+  // ################################ disconnect ###################################
     socket.on('disconnect', () => {
-      connections.splice(connections.indexOf(socket.id), 1);
       User.findOneAndUpdate({ socketID: socket.id }, {
         $set: {
           online: false,
@@ -103,7 +132,7 @@ module.exports = function (server, io) {
         }
       }).exec((err, foundUser) => {
         if (err) console.log(err);
-        User.find({ online: true }, (err, users) => {
+        User.find({}, (err, users) => {
           socket.broadcast.emit('onlineList', users)
         });
       })

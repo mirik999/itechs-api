@@ -8,8 +8,8 @@ const router = express.Router();
 router.get('/get-profile/:email', (req, res) => { 
 	const { email } = req.params;
 	User.findOne({ email })
-	.populate('myFollows.user', 'email useravatar username about contact portfolio github')
-	.populate('followedUsers.user', 'email useravatar username about contact portfolio github')
+	.populate('myFollows.user', 'email useravatar username about contact portfolio github bgImg smallImage socketID')
+	.populate('followedUsers.user', 'email useravatar username about contact portfolio github bgImg smallImage socketID')
 	.exec((err, userprofile) => {
 		if (err) res.status(400).json({ WentWrong: "Something went wrong when getting profile" })
 		res.json({ userprofile })
