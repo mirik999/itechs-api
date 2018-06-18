@@ -29,13 +29,16 @@ const server = http.createServer(app);
 const io = socket(server);
 const emitter = new EventEmitter();
 emitter.setMaxListeners(20);
+const corsOption = {
+  origin: true,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  exposedHeaders: ['x-auth-token']
+};
 // sockets calling
 sockets(server, io);
 // set middleware
-app.use(cors({
-  'allowedHeaders': ['Accept', 'Content-Type', 'Origin', 'X-Requested-With'],
-  'origin': '*',
-}));
+app.use(cors(corsOption));
 app.use(helmet());
 app.use(bodyParser.json({ limit: '50mb', type: 'application/json' }));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));

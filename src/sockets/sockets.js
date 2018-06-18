@@ -105,17 +105,18 @@ module.exports = function (server, io) {
         new Chat({
           _id: new mongoose.Types.ObjectId(),
           message: {
-            text: data.message,
+            text: data.text,
             author: data.author._id,
             reciever: data.reciever._id
           }
         }).save()
       } else {
         socket.to(data.reciever.socketID).emit('privateMessageResponse', data);
+        socket.to(data.author.socketID).emit('privateMessageResponse', data);
         new Chat({
           _id: new mongoose.Types.ObjectId(),
           message: {
-            text: data.message,
+            text: data.text,
             author: data.author._id,
             reciever: data.reciever._id
           }
