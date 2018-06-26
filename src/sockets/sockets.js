@@ -91,11 +91,11 @@ module.exports = function (server, io) {
   // ############################### private message ##############################
 
     socket.on('loadChatHistory', data => {
-      Chat.find({})
+      Chat.find({ message: { author: mongoose.Types.ObjectId(data.myID) } })
         .populate('message.author', 'email useravatar username about contact portfolio github bgImg smallImage socketID')
         .populate('message.reciever', 'email useravatar username about contact portfolio github bgImg smallImage socketID')
         .exec((err, messages) => {
-          if (err) return res.status(400).json({ WentWrong: "Something Went Wrong When System Getting all articles" })
+          if (err) console.log(err)
           socket.emit('loadChatHistory', messages)
         })
     })
