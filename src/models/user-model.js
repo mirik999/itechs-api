@@ -10,7 +10,8 @@ const schema = new mongoose.Schema({
   facebookId: { type: String },
   githubId: { type: String },
 	googleId: { type: String },
-  useravatar: { type: String, required: true },
+	useravatar: { type: String, required: true },
+	userSavatar: { type: String, required: true }, 
 	userip: { type: String, required: true },
   accessToken: { type: String },
   date: { type: Date, default: Date.now },
@@ -18,8 +19,6 @@ const schema = new mongoose.Schema({
 	portfolio: { type: String, default: "" },
 	contact: { type: String, default: "" },
 	github: { type: String, default: "" },
-	bgImg: { type: String, default: "http://res.cloudinary.com/developers/image/upload/v1513099538/ynufy8bwqn1qrwdxcinh.png" },
-	smallImage: { type: String, default: "http://res.cloudinary.com/developers/image/upload/c_scale,w_300/v1513099538/ynufy8bwqn1qrwdxcinh.png" },
 	followedUsers: [
 		{ 
 			user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } 

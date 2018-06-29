@@ -32,9 +32,12 @@ router.put('/editing/:email', (req, res) => {
 		})
 })
 
-router.put('/change-cover/:email', (req, res) => {
-	const { bgImg, smallImage, email } = req.body.data;
-	User.findOneAndUpdate({ email }, { $set: { bgImg, smallImage } }, { new: true }, (err, userprofile) => {
+router.put('/change-avatar/:email', (req, res) => {
+	const { avatar, sAvatar, email } = req.body.data;
+	User.findOneAndUpdate({ email }, { $set: { useravatar: avatar, userSavatar: sAvatar } }, { new: true })
+	.populate('myFollows.user', 'email useravatar username about contact portfolio github bgImg smallImage socketID')
+	.populate('followedUsers.user', 'email useravatar username about contact portfolio github bgImg smallImage socketID')
+	.exec((err, userprofile) => {
 		if (err) res.status(400).json({ WentWrong: "Something went wrong when changing profile cover image" })
 		res.json({ userprofile })
 	})

@@ -37,7 +37,7 @@ router.get('/get-all-articles', (req, res) => {
 		.populate('comments.author', 'email useravatar username about contact portfolio github bgImg smallImage socketID')
 		.sort('-added')
 		.exec((err, articles) => {
-			if (err) return res.status(400).json({ WentWrong: "Something Went Wrong When System Getting all articles" })
+			if (err) return res.status(400).json({ WentWrong: "Something Went Wrong When Getting all articles" })
 			res.json({ articles })
 		})
 })
